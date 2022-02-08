@@ -2,7 +2,7 @@
 
 - virtual box   [다운로드](https://www.virtualbox.org/wiki/Downloads)
 - vagrant       [다운로드](https://www.vagrantup.com/downloads)
-- 
+
 ### [목차]
 ## 1장 새로운 인프라 환경이 온다
 1. 컨테이너 인프라 환경이란
