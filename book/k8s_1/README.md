@@ -2,7 +2,7 @@
 
 - virtual box   [다운로드](https://www.virtualbox.org/wiki/Downloads)
 - vagrant       [다운로드](https://www.vagrantup.com/downloads)
-- k8s Docs(https://kubernetes.io/ko/docs/home/)
+- k8s [Docs](https://kubernetes.io/ko/docs/home/)
 
 ### [목차]
 ## 1장 새로운 인프라 환경이 온다
