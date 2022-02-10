@@ -3,7 +3,7 @@
 - virtual box   [[다운로드](https://www.virtualbox.org/wiki/Downloads)]
 - vagrant       [[Docs](https://www.vagrantup.com/docs)] [[Cloud](https://app.vagrantup.com/boxes/search)] [[다운로드](https://www.vagrantup.com/downloads)]
 - k8s           [[Docs](https://kubernetes.io/ko/docs/home/)]
-- Ruby.         [[Docs](https://ruby-doc.org)]
+- ruby          [[Docs](https://ruby-doc.org)]
 
 ### [목차]
 ## 1장 새로운 인프라 환경이 온다
