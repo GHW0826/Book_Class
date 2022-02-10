@@ -4,6 +4,9 @@
 - vagrant       [[Docs](https://www.vagrantup.com/docs)] [[Cloud](https://app.vagrantup.com/boxes/search)] [[다운로드](https://www.vagrantup.com/downloads)]
 - k8s           [[Docs](https://kubernetes.io/ko/docs/home/)]
 - ruby          [[Docs](https://ruby-doc.org)]
+- putty         [[다운로드](https://www.chiark.greenend.org.uk/~sgtatham/putty/)]
+- superputty    [[다운로드](https://github.com/jimradford/superputty/releases)]
+
 
 ### [목차]
 ## 1장 새로운 인프라 환경이 온다
