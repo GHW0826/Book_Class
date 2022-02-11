@@ -56,3 +56,77 @@ class Test1 {
   
   
 ## 4.객체를 사용하기 전에 반드시 그 객체를 초기화하자
+  - 상황에 따라 객체의 값 초기화가 다르게 된다.
+  - 생성자 내에서 대입과, 초기화구분이 필요함.
+  - 대입은 멤버 변수에 대한 생성자를 호출하고 초기화 후, 값을 대입 시킨다.
+  - 초기화는 복사생성자에 의해 초기화 된다.
+  - 상수이거나 참조자는 대입이 안되기 떄문에 반드시 초기화 해야함.
+  - 데이터 초기화 순서.  1. 기본 클래스 -> 파생 클래스 순서. 2. 클래스 데이터 멤버는 선언된 순서대로 초기화.
+
+```cpp
+  class TEST {
+    public:
+      int member1_;
+      std::string member2_;
+    public:
+      TEST(const int member1, const std::string& member2);
+  }
+  
+  // 초기화가 아닌 대입
+  TEST::TEST(const int member1, const std::string& member2)
+  {
+    member1_ = member1;
+    member2_ = member2;
+  }
+  
+  // 초기화
+  TEST::TEST(const int member1, const std::string& member2)
+    : member1_(member1), member2_(member2)
+  {
+  }
+  
+  // 기본은 이런식으로.
+  TEST::TEST()
+    : member1_(), member2_()
+  {
+  }
+```
+  
+  - 비지역 정적 객체의 초기화 순서는 개별 번역 단위에서 정해짐. (프로그램 끝날 때 자동으로 소멸.)
+    + 네임스페이스 유효범위에서 정의된 객체
+    + 클래스 안에서 static으로 선언된 객체
+    + 함수 안에서 static으로 선언된 객체
+    + 전역 객체
+    + 파일 유효범위에서 static으로 정의된 객체
+  
+    * 지역 정적 객체
+      + 함수 안에 있는 정적 객체
+    * 비지역 정적 객체
+      + 나머지
+  - 번역 단위 : 컴파일을 통해 하나의 목적 파일(obj)을 만드는 바탕이 되는 소스 코드. #include 하는 파일(들)까지 합쳐서 하나의 번역 단위.
+  - 별개의 번역 단위 정의된 비지역 정적 객체들의 초기화 순서는 정해져 있지않아 객체끼리 초기화에 사용된다면 위험하다.
+```cpp
+  class TEST {
+  }
+  extern TEST obj1;
+  
+  class TEST2 {
+    public:
+      TEST2() {
+    
+        TEST test_obj = obj1;   // obj1이 초기화 됐는지 안됐는지 모름.
+        ...
+      }
+  }
+```
+  
+  - 비지역 정적 객체를 하나씩 맡는 함수를 준비하고 이 안에 각 객체를 넣어서 해결. (싱글톤 느낌이다.)
+    * 함수 속에서 정적 객체로 선언하고, 참조자를 반환하게 만듦. (비지역 정적 객체가 지역 정적 객체로 바뀜.)
+  - 지역 정적 객체는 함수 호출 중에 그 객체의 정의에 닿으면 초기화 되도록 만들어짐 (C++보장)
+```cpp
+  TEST& get()
+  {
+    static TEST obj;
+    return obj;
+  }
+```
