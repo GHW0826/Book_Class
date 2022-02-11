@@ -1,5 +1,5 @@
 
-[kubectl](https://kubernetes.io/ko/docs/reference/kubectl/overview/)
+kubectl[link](https://kubernetes.io/ko/docs/reference/kubectl/overview/)
 
 ### 관리형
  - EKS, AKS, GKE
