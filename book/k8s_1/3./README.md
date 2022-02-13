@@ -14,7 +14,7 @@ kubectl  [[link](https://kubernetes.io/ko/docs/reference/kubectl/overview/)]
 <details>
 <summary>배포 관련 순서</summary>
 <div markdown="1">
- ## 파드 배포 명령시 순서 (0 ~ 7 : 통신단계, 10번대는 순서 상관 없다).
+## 파드 배포 명령시 순서 (0 ~ 7 : 통신단계, 10번대는 순서 상관 없다).
  1. kubectl : 쿠버네티스 클러스터에 명령을 내리는 역할. 바로 실행되는 바이너리로 배포됨.
  2. API 서버 : 쿠버네티스 클러스터의 중심 통로 역할. 주로 상태 값 저장하는 etcd와 통신. 그 밖의 요소들 또한API 서버를 중심에 두고 통신.
  3. etcd: 구성 요소들의 상태 값이 모두 저장되는 곳.여기만 백업돼 있으면 긴급 장애 상황에서도 쿠버네티스 클러스터 복구 가능. key-value 저장소.
