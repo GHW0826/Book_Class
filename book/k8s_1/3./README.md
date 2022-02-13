@@ -37,6 +37,7 @@ kubectl  [[link](https://kubernetes.io/ko/docs/reference/kubectl/overview/)]
 <details>
 <summary>파드 생명주기(생성, 수정, 삭제) 구성 요소</summary>
 <div markdown="1">
+ 
 ## 파드 생명주기(생성, 수정, 삭제)로 쿠버네티스 구성 요소 파악
  1. kubectl을 통해 API 서버에 파드 생성을 요청
  2. (업데이트 때마다) API 서버에 전달된 내용이 있으면 API 서버는 etcd에 전달된 내용을 모두 기록해 클러스터 상태값 최신 유지.
@@ -46,6 +47,7 @@ kubectl  [[link](https://kubernetes.io/ko/docs/reference/kubectl/overview/)]
  6. kubelet에서 컨테이너 런타임으로 파드 생성 요청
  7. 파드 생성
  8. 파드가 사용 가능 상태가 됌.
+ 
 </div>
 </details>
 
