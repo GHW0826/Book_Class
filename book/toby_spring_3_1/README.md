@@ -1,8 +1,6 @@
 
 # [토비의 스프링 3.1](http://www.kyobobook.co.kr/product/detailViewKor.laf?ejkGb=KOR&mallGb=KOR&barcode=9788960773431&orderClick=LEa&Kc=)
 
-### [목차]
-
 ## 『토비의 스프링 3.1 Vol. 1 스프링의 이해와 원리』
 1. 오브젝트와 의존관계
 2. 테스트
