@@ -58,3 +58,11 @@ kubectl  [[link](https://kubernetes.io/ko/docs/reference/kubectl/overview/)]
 - kubectl이 어디에 있더라도 API서버의 접속 정보만 있다면 어느 곳에서든 쿠버네티스 클러스터에 명령을 내릴수 있다.
 - kubelet은 파드의 생성과 상태 관리 및 복구등을 담당. 문제가 생기면 파드가 정상적으로 관리되지 않는다.
 - kubeproxy는 파드의 통신 담당.
+
+- run으로 파드 생성시 단일 파드 1개만 생성되고 관리
+- create deployment로 파드를 생성하면 디플로이먼트라는 관리 그룹 내에서 파드가 생성. (그룹이 추가됌)
+
+@ 1.18 버전 이전에는 run으로 기본 파드가 디플로이먼트로 생성.
+
+### 
+
