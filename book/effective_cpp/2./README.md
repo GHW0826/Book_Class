@@ -159,4 +159,94 @@
 
 ## 11. operator=에서는 자기대입에 대한 처리가 빠지지 않도록 하자
 
+  - 자기대입이란 객체가 자기 자신에 대해 대입 연산자를 적용하는것
+```cpp
+  Test w;
+  w = w;  // 자기 대입
+```
+
+  - 같은 타입으로 만들어진 객체 여러 개를 참조자 or 포인터를 사용하는 형태일 때, 같은 객체 사용 가능성을 고려해야 한다.
+```cpp
+  class TEST
+  {
+    public:
+      resource* pResource_;
+      
+      TEST& TEST::operator=(const TEST& rhs)
+      {
+        // 1. 자기대입은 방지, new에서 예외 발생시 resource는 댕글링
+        // 객체가 같은지 검사후, 같으면 바로 반환.
+        if (this == &rhs)
+          return *this;     
+          
+        delete pResource_;
+        pResource_ = new resourece(*rhs.pResource_);
+        
+        
+        // 2. 자기대입도 방지, new 예외도 방지. but resource를 복사하기 때문에 최고 효율은 아니다.
+        resource* ptemp = pResource_;
+        pResource_ = new resourece(*rhs.pResource_);
+        delete ptemp;
+        
+        // 3. 복사후 바꾸기 (copy and swap)
+        TEST temp(rhs);
+        swap(temp);
+        
+        // TEST& TEST::operator=(TEST rhs);   매개변수 복사본을 사용해도 된다.
+        // { swap(rhs);  return *this; }
+        
+        return *this;
+      }
+  }
+```
+  - 두개 이상 객체에 대해 동작하는 함수가 있다면, 상속관계를 파악하고, 넘겨지는 객체가 같은 객체인지 확인하자.
+
 ## 12. 객체의 모든 부분을 빠짐없이 복사하자
+
+  - (복사 생성자, 복사 대입 연산자 ) 복사 함수.
+  - 복사 함수 내에서 따로 변수 복사를 하지않으면 복사하지 않는다.
+  - 상속 관계에서 부모 클래스의 복사 부분도 놓치지 말자.
+```cpp
+  class TEST1
+  {
+    ...
+  }
+  
+  class TEST2 : public TEST1
+  {
+    TEST2::TEST2(const TEST2& rhs)
+      : TEST1(rhs),
+        val2(rhs.val2)
+    {
+    }
+    
+    TEST2& TEST2::operator=(const TEST2& rhs)
+    {
+      TEST1::operator=(rhs);
+      val2 = rhs.val2;
+      
+      return *this;
+    }
+  }
+```
+  
+  - 복사하는 내용이 비슷해 복사 생성자 내에 복사 대입 연산자를 사용하면 안된다. (반대도 마찬가지)
+  - 코드 본문이 비슷한 부분을 private 함수로 만들어서 양쪽에서 겹치는 부분 호출은 가능.
+```cpp
+class TEST
+  {
+    TEST::TEST(const TEST& rhs)
+    {
+      init(rhs);
+    }
+    
+    TEST& TEST::operator=(const TEST& rhs)
+    {
+      init(rhs);
+      
+      return *this;
+    }
+    private:
+      void init(const TEST& copy);
+  }
+```
