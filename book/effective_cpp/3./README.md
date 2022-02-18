@@ -23,6 +23,7 @@
 ```
 
 ## 14. 자원 관리 클래스의 복사 동작에 대해 진지하게 고찰하자
+
   - RAII클래스에 구현하는 일반적인 복사 동작 (1, 2번을 주로 사용)
     1. 복사 금지
     2. 관리하는 자원에 대해 참조 카운팅 수행.
@@ -31,6 +32,33 @@
 
 ## 15. 자원 관리 클래스에서 관리되는 자원은 외부에서 접근할 수 있도록 하자
 
+  - RAII 클래스의 객체를 직접 접근하기 위해, 명시적 변환, 암시적 변환이 있다.
+  - 명시적 변환
+```cpp
+  int test = getTTest(test.get());    // 명시적 변환. get이라는 함수를 제공하여 접근 가능하게 한다.
+```
+  - 암시적 변환
+```cpp
+  class TEST
+  {
+    public:
+      operator T() const { return pResource_; }   // 암시적 변환.
+    private:
+      T pResource_;
+  }
+```
+
 ## 16. new 및 delete를 사용할 때는 형태를 반드시 맞추자
+
+  - delete 사용시 기존 메모리에 대해 한 개 이상의 소멸자가 호출되고, 그후 그 메모리가 해제된다.
+```cpp
+  delete test;      // 객체 1개를 삭제
+  delete[] test2;   // 객체 배열을 삭제.
+```
+  - new에 []을 사용했으면 delete도 []를 쓰자.
+```cpp
+  std::string test1 = new std::string       <->  delete test1;
+  std::string test2 = new std::string[100]  <->  delete[] test2;
+```
 
 ## 17. new로 생성한 객체를 스마트 포인터에 저장하는 코드는 별도의 한 문장으로 만들자
