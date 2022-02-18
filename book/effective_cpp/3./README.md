@@ -57,8 +57,8 @@
 ```
   - new에 []을 사용했으면 delete도 []를 쓰자.
 ```cpp
-  std::string test1 = new std::string       <->  delete test1;
-  std::string test2 = new std::string[100]  <->  delete[] test2;
+  std::string* test1 = new std::string       <->  delete test1;
+  std::string* test2 = new std::string[100]  <->  delete[] test2;
 ```
 
 ## 17. new로 생성한 객체를 스마트 포인터에 저장하는 코드는 별도의 한 문장으로 만들자
