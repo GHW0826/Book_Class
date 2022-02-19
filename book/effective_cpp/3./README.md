@@ -62,3 +62,33 @@
 ```
 
 ## 17. new로 생성한 객체를 스마트 포인터에 저장하는 코드는 별도의 한 문장으로 만들자
+
+  - 자바, C#은 매개변수의 평가 순서가 특정하게 고정되어 있지만, C++은 아님.
+```cpp
+  void Test(std::shared_ptr<T>, int);
+   
+   void func()
+  {
+    ...
+    /*  아래 호출 순서가 컴파일러마다 다르다.
+        new, shard_ptr 생성자 호출은 순차적이지만 사이에 getNum() 순서가 섞일수 있다.
+        2 -> 1 -> 3 순서로 호출시 getNum()에서 예외를 던지면 new 했던 포인터가 유실될 수 있다.
+      1. getNum() 호출
+      2. new T 호출
+      3. shared_ptr 생성자 호출
+    */
+    Test(std::shared_ptr<T>(new T), getNum());
+    ...
+   }
+```
+  - new 로 생성한 객체를 스마트 포인터로 넣는 코드는 한문장으로 별도로 만든다. 예외 발생시 디버깅하기 힘듦.
+```cpp
+  void func()
+  {
+    ...
+    std::shared_ptr<T> test(new T);
+     
+    Test(test, getNum());
+    ...
+  }
+```
