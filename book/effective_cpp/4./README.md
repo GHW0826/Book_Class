@@ -61,11 +61,102 @@
 
 ## 21. 함수에서 객체를 반환해야 할 경우에 참조자를 반환하려고 들지 말자
 
+  - 실제하지 않은 참조자를 넘길 위험이 있다. (스택 생성된 객체 반환시 블록 나가면 객체 삭제됨)
+```cpp
+  // 참조 반환. 아래 경우 다 안된다.
+  const TEST& operator*(const TEST& lhs, const TEST& rhs)
+  {
+    // 1. 지역 객체
+    TEST obj(lhs, rhs); // 지역 객체라 블록 벗어나면 소멸된다.
+    
+    // 2. 힙 객체, 삭제를 밖에서 해줘야 해서 까다롭다.
+    TEST* obj = new TEST(lhs, rhs);
+    
+    // 3. static 객체 반환. 스레드 세이프 하지 못하고, 참조자라 비교 연산시 항상 같을 수 있음.
+     static TEST obj;
+     .... // obj, lhs, rhs 작업
+     
+    return obj;
+  }
+```
+  - 정도의 방법을 쓰자
+```cpp
+  // 생성, 소멸의 비용은 들어감. 몇몇 조건하에 컴파일러가 최적화 메커니즘을 적용함.
+  // RVO (반환 값 최적화 : return value optimization)
+  inline const TEST operator* (const TEST& lhs, const TEST& rhs)
+  {
+    return TEST(lhs, rhs);
+  }
+```
+
 ## 22. 데이터 멤버가 선언될 곳은 private 영역임을 명심하자
+
+  - 데이터 멤버가 public이 아니면 사용자 쪽에서 어떤 객체를 접근할 수 있는 유일한 수단은 멤버 함수 뿐. (접근할때 일관성이 있다.)
+  - 읽기, 쓰기 접근권한을 개발자가 조절 가능하다. (게터, 세터 각 부분만 구현하면 된다.)
+  - public이나 protected나 비슷비슷하다. (private에 비해 변경시 생각해야하는 범위가 너무 넓어진다.)
 
 ## 23. 멤버 함수보다는 비멤버 비프렌드 함수와 더 가까워지자
 
+  - 비멤버 비프렌드 함수 사용시, 관련 기능 패키징 유연성이 높아지고, 컴파일 의존도도 낮춰진다.
+  - 유틸리티 클래스 같이 모아놔도 된다.
+```cpp
+  namespace TestUtill {
+    class TEST { ... };
+    void clear(TEST& obj);
+    void init(TEST& obj);
+  }
+  
+  // 필요한 기능만 쪼개서 관련 함수만 모아 관리도 가능.
+  // TEST 자체.
+  namespace TestUtill {
+    class TEST { ... };
+  }
+  
+  // TEST_init.h 헤더
+  namespace TestUtill {
+    void init(TEST& obj);
+  }
+  
+  // TEST_clear.h 헤더
+  namespace TestUtill {
+    void clear(TEST& obj);
+  }
+```
+
 ## 24. 타입 변환이 모든 매개변수에 대해 적용되어야 한다면 비멤버 함수를 선언하자
+
+  - 암시적 변환은 일반적으로 구리지만, 숫자타입 만들때는 예외이다.
+  - 암시적 변환 함수는 비멤버 비프렌드 함수로 구현하자. (양쪽 자동 암시적 변환이 된다.)
+```cpp
+  class Num
+  {
+    public:
+      Num(int num);
+      const Num operator*(const Num& obj) const     // 1.
+      { ... }
+      ...
+  }
+  
+  // 2.
+  // 비멤버 함수로 구현해 양쪽 인자 모두 암시적 변환이 가능하게 한다.
+  const Num operator*(const Num& lhs, const Num& rhs)
+  {
+    return Num(lhs.getNum() * rhs.getNum());
+  }
+  
+  int main()
+  {
+    Num num1(2);
+    Num num2(3);
+    
+    Num result = num1 * num2;
+    result = Num1 * 2;        // 된다. num1.operator*(Num(2))로 암시적 변환이 일어나 가능
+    result = 3 * num1;        // 3.operator(num1)과 같아 암시적 변환이 안되서 안된다. (1번 멤버 함수로 호출시는 불가능, 2번 비멤버 함수로 호출시 가능)
+    return 0;
+  }
+```
+
+  - 어떤 함수에 들어가는 모든 매개변수(this 포인터가 가리키는 객체도 포함)에 대해 타입 변환이 필요하다면, 그 함수는 비멤버여야 한다.
 
 ## 25. 예외를 던지지 않는 swap에 대한 지원도 생각해 보자
 
