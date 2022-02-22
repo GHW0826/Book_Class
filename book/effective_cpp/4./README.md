@@ -160,3 +160,46 @@
 
 ## 25. 예외를 던지지 않는 swap에 대한 지원도 생각해 보자
 
+  - swap은 기본적으로 복사를 3번한다.
+  - 포인터 종류는 pimpl 관용구 기법 많이 사용. 일반 swap은 데이터 다 복사해서 비효율적. 템플릿 특수화 해서 사용.
+  - std네임스페이스 구성요소는 일반적으로 프로그래머가 만든 타입에 대해 표준 템플릿을 완전 특수화, 부분 특수화 하는 것은 허용.
+  - std내에 템플릿 완전 특수화는 되지만, 새로운 템플릿을 추가하는 건 안된다.
+  - 템플릿 함수등.. 함수내에서 using std::swap 작성시 std::swap을 호출하게 해준다.
+  - c++ 이름 탐색 규칙. 전역 유효범위 or 타입 T와 동일한 네임스페이스 안에 T전용 함수가 있는지 찾는다. 이후 블록내에 using 선언을 캐치한다.
+  - std::swap을 바로 사용시, 특수화 T swap은 사용하지 않는다.
+```cpp
+  class TESTImpl
+  {
+    public:
+      ....
+    private:
+      ... // 많은 데이터들..
+  }
+  class TEST
+  {
+    public:
+      void swap(TEST& obj)
+      {
+        using std::swap;
+        
+        swap(pImpl, obj.pImpl);
+      }
+    private:
+      TESTImpl* pImpl;    // 실제 데이터를 가진 객체 포인터.
+  }
+  
+namespace std {
+  template<>
+  void swap<TEST>(TEST& a, TEST& b)
+  {
+    a.swap(b.pImpl);
+  }
+  
+  // 템플릿 클래스 버전
+  template<>
+  void swap<TEST<T>>(TEST& a, TEST& b)
+  {
+    a.swap(b.pImpl);
+  }
+}
+```
