@@ -224,5 +224,72 @@
    - 응용 영역에서 객체 합성의 의미는 has-a. 구현 영역에서 is-implemented-in-terms-of의 의미를 가진다.
 
 ## 39. private 상속은 심사숙고해서 구사하자
-
+   @ 공백 클래스 (아무것도 없는 클래스)는 기본적으로 반드시 크기가 0을 넘는다.
+   - 이런 공백클래스를 상속시키면 공백 기본 클래스 최적화 (EBO)되어 크기가 늘지 않는다.
+   - public 상속은 is-a 관계
+   - 상속 관계가 private면 컴파일러는 일반적으로 파생 클래스를 기본 클래스로 변환하지 않는다.
+   - 기본 클래스에서 물려받은 멤버는 파생 클래스에서 모두 private 멤버가 된다.(public, protected 멤버라도)
+   - private상속의 의미는 is-implemeneted-in-terms-of이다.
+   - 일반적으로 객체합성, 꼭 사용해야하면 private 상속 사용. (비공개 멤버를 접근할 때 or 가상 함수를 재정의 할때)
+  
 ## 40. 다중 상속은 심사숙고해서 사용하자
+
+   - 다중 상속시 둘 이상의 기본 클래스로부터 똑같은 이름을 물려받을 가능성이 생긴다(모호성이 생김)
+   - 모호성을 해결하려면 어떤 기본 클래스의 함수인지 직접 지정해주어야 함.
+```cpp
+   class B1
+   { void fn(); };
+   class B2
+   { void fn(); };
+   
+   class D : public B1, public B2
+   { ... };
+   
+   {
+      D t;
+      t.B1::fn(); // 어떤 기본 클래스의 함수인지 지정.
+   }
+```
+   - 마름모 다중 상속시 데이터 멤버가 중복 상속되 중첩된다. 가상 기본 클래스로 만들어 해결함(가상 상속)
+   - 가상 상속을 사용하면 사용하지 않은 클래스의 객체보다 일반적으로 크기가 더 크다. 가상 기본 클래스의 데이터 멤버에 접근하는 속도도 느림.
+   - 기본적으로 쓸 필요 없으면 가상 기본 클래스 안씀.
+   - 꼭 써야 한다면 가상 기본 클래스에 데이터를 넣지 않는 쪽으로 설계.
+```cpp
+   class F {...};
+   class D : virtual public F { ... };       // 가상 상속
+   class G : virtual public F { ... };       // 가상 상속
+   class H : public D, public G { ... };
+```
+   - 다중 상속 사용하려면 인터페이스 클래스로부터 public 상속, 구현을 돕는 클래스로부터 private 상속을 시킨다.
+```cpp
+   class ITEST
+   {
+      public:
+         virtual ~ITEST();
+         virtual std::string name() const = 0;
+   }
+   
+   class TESTInfo
+   {
+      public:
+         virtual const char * theName() const
+         {
+            Open();
+            ...
+            Close();
+         }
+      private:
+         virtual const char * Open() const;
+         virtual const char * Close() const;
+   }
+   
+   class TEST : public ITEST, private TESTInfo
+   {
+      public:
+         virtual std::string name() const;                  // ITEST 순수 가상 함수 구현 제공.
+         {  return TESTInfo::theName(); }
+      private:
+         virtual const char * Open() const { return ""; }   // TESTInfo 가상 함수 
+         virtual const char * Close() const { return ""; }  // TESTInfo 가상 함수
+   }
+```
