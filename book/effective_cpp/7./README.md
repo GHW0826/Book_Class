@@ -59,7 +59,84 @@
 - 너무 길면  typedef로 줄이기 가능 (ex. typedef typename std::iterator_traits<T>::value_type value_type; )
   
 ## 43. 템플릿으로 만들어진 기본 클래스 안의 이름에 접근하는 방법을 알아 두자
+  
+  - 파생 클래스 템플릿에서 기본 클래스 템플릿의 이름 참조시 'this->', using, 기본 클래스 한정문을 명시적으로 써준다.
+  - 템플릿 매개변수가 인스턴스로 만들어 질때까지 무엇이 될지 알 수 없다. (완전 템플릿 특수화 등.. 예외 경우가 있다)
+  - 컴파일러가 파악하는 과정에 템플릿 정의 구문 분석할 수 있게 미리 파악하게 해준다.
+```cpp
+  class Info { ... };
+  
+  template<typename T>
+  class TEST
+  {
+    public:
+      void clear(const Info& info)
+      {
+        T obj;
+        obj.clear(info);    // 
+      }
+  }
+  
+  tempalte<typename T>
+  class TESTInfo : public TEST<T>
+  {
+    public:
+      // using TEST<T>::clear;
+  
+      void clearInfo(const Info& info)
+      {
+        ...
+        clear(info);
+        // this->clear(info);
+        // TEST<T>::clear(info);    // 호출되는 함수가 가상함수인 경우, 명시적 한정시 가상 함수 바인딩이 무시된다.
+        ...
+      }
+  }
+```
+  
 ## 44. 매개변수에 독립적인 코드는 템플릿으로부터 분리시키자
+  
+  - 템플릿 사용시 코드 비대화 될 수 있다.
+  - 공통성 및 가변성 분석 (그냥 공통적인 부분을 함수로 뽑고, 호출하도록 수정하는것) 똑같이 템플릿에 적용.
+  - 템플릿은 코드 중복이 암시적(인스턴스화될때 발생함), 코드중복을 감각으로 알아채야 한다.
+  - 비타입 템플릿 매개변수로 생기는 코드 비대화는, 템플릿 매개변수를 함수 매개변수 or 클래스 데이터 멤버로 대체해 비대화를 종종 없앤다.
+  - 타입 매개변수로 생기는 코드 비대화의 경우, 동일한 이진 표현구조를 가지고 인스턴스화되는 타입들이 한 가지 함수 구현을 공유하게 해 비대화 감소 가능. (int, long..)
+  - 포인터의 경우 하단에서 타입 미정 포인터 (void*)로 동작하는 버전을 호출하는 식으로 만든다. 
+```cpp
+  // size_t에 따라 인스턴스화됨.
+  template<typenamt T, std::size_t n>
+  class TEST 
+  {
+    public:
+      void fn();
+  };
+  
+  {
+    TEST<double, 5> obj1;
+    TEST<double, 10> obj2;
+  
+    // size_t가 작동하는 부분 뺴곤 일치.
+    obj1.fn();    
+    obj2.fn();
+  }
+  
+  // 1. 함수에 매개변수를 받게해 인스턴스화를 줄임.
+  template<typenamt T>
+  class TESTBase
+  {
+    protected:
+      void fn(std::size_t num);
+  }
+  template<typenamt T, std::size_t n>
+  class TEST : private TEST<T>
+  {
+    private:
+      using TEST<T>::invert;
+    public:
+      void fn() { this->invert(n); }
+  };
+```
+
 ## 45. "호환되는 모든 타입"을 받아들이는 데는 멤버 함수 템플릿이 직방!
 ## 46. 타입 변환이 바람직할 경우에는 비멤버 함수를 클래스 템플릿 안에 정의해 두자
 ## 47. 타입에 대한 정보가 필요하다면 특성정보 클래스를 사용하자
