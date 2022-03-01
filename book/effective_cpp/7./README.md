@@ -138,6 +138,63 @@
 ```
 
 ## 45. "호환되는 모든 타입"을 받아들이는 데는 멤버 함수 템플릿이 직방!
+  
+  - 포인터는 암시적 변환 가능. 스마트 포인터는 불가능. (상속 관계 변환. 상수, 비상수 관계 변환)
+  - 스마트 포인터 계열은 직접 변환 방법을 작성해야 함. -> 멤버 함수 템플릿 (생성자 템플릿)을 쓴다.
+```cpp
+  // 1.
+  template<typename T>
+  class ptr
+  {
+    public:
+      template<typename U>      // 일반화된 복사 생성자를 위한 멤버 템플릿.  (일반화 복사 생성자 라고 부른다.)
+      ptr(const ptr<U>& obj);   // but 상속 관계 역행등 더 다양한 케이스가 많아짐.
+  }
+  
+  
+  // 2.
+  // 초기화를 이용해 T* 타입을 U*타입으로 초기화함. 암시적 변환이 가능할 떄만 컴파일 에러가 나지 않는다.
+  // 이런건 대입 연산에서 많이 사용.
+  template<typename T>
+  class ptr
+  {
+    public:
+      template<typename U>     
+      ptr(const ptr<U>& obj)
+      : heldptr_(other.get()) {...}
+      
+      T* get() const { return heldptr; }
+    private:
+      T* heldptr;
+  }
+```
+  - 템플릿도 기본적으로 c++. 컴파일러 기본 생성 규칙에 따라 복사생성자도 기본으로 생김. (일반화 복사 생성자는 기본생성자가 아니다)
+  - 일반화된 복사 생성자, 대입 연산을 선언 했더라도 보통의 복사 생성자, 복사 대입 연산자는 직접 선언하자.
+  
 ## 46. 타입 변환이 바람직할 경우에는 비멤버 함수를 클래스 템플릿 안에 정의해 두자
+  
+  - 템플릿 인자 추론 과정에서는 암시적 타입 변환이 고려되지 않는다.
+  - 클래스 템플릿 안에 프렌드 함수를 넣어둬 함수 템플릿 성격을 주지 않고 특정 함수 하나를 나타낼 수 있다.
+  - 클래스 템플릿 내부에서는 템플릿의 이름(<> 뗸 것)을 그 템플릿 및 매개변수의 줄임말로 쓸 수 있다.
+```cpp
+  template<typename T>
+  class TEST
+  {
+    public:
+      // 여기서 정의해야 링크 문제 해결.
+      friend const TEST operator*  (const TEST& lhs, const TEST& rhs)
+      {
+        // 헬퍼 함수 이용.
+        return fn(lhs, rhs);
+      }
+      // firend const TEST<T> operator* (const TEST<T>& lhs, const TEST<T>& rhs);
+  }
+```
+  - 헬퍼 함수를 써서 프렌드 함수가 호출하게 해도 됌.
+```cpp
+  template<typename T>
+  const TEST<T> fn(const TEST<T>& lhs, const TEST<T>& rhs);
+```
+  
 ## 47. 타입에 대한 정보가 필요하다면 특성정보 클래스를 사용하자
 ## 48. 템플릿 메타프로그래밍, 하지 않겠는가?
