@@ -197,4 +197,67 @@
 ```
   
 ## 47. 타입에 대한 정보가 필요하다면 특성정보 클래스를 사용하자
+  
+  - STL 반복자 종류 
+    + 입력 반복자 : 전진만 가능. 한번에 한 칸씩만 이동. 읽기만 한번 가능. (ex. istream_iterator )
+    + 출력 반복자 : 입력 반복자와 비슷하지만 출력만 가능. 쓸 수 있는 횟수가 한번. (ex. ostream_iterator)
+    + 순방향 반복자 : 입출력 반복자 하는 일 기본적으로 가능. + 자신이 가리키는 위치에서 읽기, 쓰기 여러 번 가능. (ex. 해시 컨테이너 반복자)
+    + 양방향 반복자 : 순방향 반복자에 뒤로 갈 수 있는 기능 추가. (ex. list, set, multiset, map, multimap 등 컨테이너 반복자)
+    + 임의 접근 반복자 : 양방향 반복자에 "반복자 산술 연산" 수행 기능 추가. (ex. vector, deque, string 반복자)
+  
+  - C++ 표준 라이브러리는 위 반복자 식별 태크 구조체가 정의되어 있다. 
+```cpp
+  struct input_iterator_tag {};
+  struct output_iterator_tag {};
+  struct forward_iterator_tag : public input_iterator_tag {};
+  struct bidrectional_iterator_tag : public forward_iterator_tag {};
+  struct random_access_iterator_tag : public bidirectional_iterator_tag {};
+```
+  
+  - 반복자의 타입에 따라 함수 구현이 달라질 수 있다. 이때 반복자의 타입을 알려면 특성 정보 사용.
+  - 컴파일 타임시 적용되는것과 런타임시 적용되는 것 구분해서 코드 설계.
+  - 특성 정보를 이용해 오버로드해서 사용.
+```cpp
+  
+  typdef random_access_iterator_tag iterator_category;
+  typdef bidrectional_iterator_tag iterator_category;
+  ...
+  
+  template<typenamt IterT>
+  struct iterrator_traits    // 특성정보는 구조체로 구현이 관계
+  {
+    tpyedef typename IterT::iterator_category iterator_category;
+  }
+  
+  template<typenamt IterT>
+  struct iterrator_traits<IterT*>   // 포인터 타입에 대한 템플릿 특수화
+  {
+    tpyedef random_access_iterator_tag iterator_category;
+  }
+  
+  // 함수 오버로드.
+  template<typename IterT, typename DistT>
+  void doAdvance(IterT& iter, DistT d, std::random_access_iterator_tag);
+  
+  template<typename IterT, typename DistT>
+  void doAdvance(IterT& iter, DistT d, std::bidirectional_iterator_tag);
+  ...
+  
+  
+  template<typename IterT, typename DistT>
+  void advance(IterT& iter, DistT d)
+  {
+    doAdvance(iter, d,
+      typename std::iterator_traits<IterT>::iterator_category()); // 반복자 타입에 따라 오버로드 된 함수 호출.
+  }
+```
+  
 ## 48. 템플릿 메타프로그래밍, 하지 않겠는가?
+
+  - 템플릿 메타프로그래밍 : 컴파일 도중에 실행되는 템플릿 기반 프로그램 작성.
+  - 템플릿은 컴파일 타임 영역이라 몇몇 에러들을 컴파일 도중에 찾을 수 있다.
+  - 템플릿의 반복 의미는 재귀를 사용함. (재귀식 템플릿 인스턴스화)
+  - TMP 주요 사항 
+    + 치수 단위의 정확성 확인
+    + 행렬 연산의 최적화 : 표현식 템플릿 사용시 덩치 큰 임시 객체를 없애고 루프를 합칠 수 있다.
+    + 맞춤식 디자인 패턴 구현 생성
