@@ -92,4 +92,42 @@
 
 ## 52. 위치지정 new를 작성한다면 위치지정 delete도 같이 준비하자
 
-  - 
+  - new 함수의 위치지정 버전을 만들떄는, 짝에 맞춰 delete 위치 지정 버전도 꼭 만들자.
+  - 추가 매개변수 new호출시 똑같이 추가 매개변수 delete가 없다면 메모리 해제시 delete가 호출되지 않는다. (생성자에서 예외를 던지면..)
+  - 일반 delete시 추가 매개변수 delete호출 말고 기본형이 호출됨.
+  - 어떤 형태든 new가 클래스 안에 선언되는 순간, 표준 형태들이 다 가려진다.
+  - 위치 지정 new, delete 선언시 표준 버전이 가려지지 않게 하자.
+```cpp
+  class StdNewDelete
+  {
+    public:
+      // 기본형 
+      static void* operator new(std::size_t size) throw (std::bad_alloc)
+      { return ::operator new(size);
+      static void* operator delete(void* pMemory) throw()
+      { return ::operator delete(pMemory);
+      
+      // 위치 지정
+      static void* operator new(std::size_t size, void* ptr) throw (std::bad_alloc)
+      { return ::operator new(size, ptr);
+      static void* operator delete(void* pMemory, void* ptr) throw()
+      { return ::operator delete(pMemory, ptr);
+      
+      // 예외불가
+      static void* operator new(std::size_t size, const std::nothrow_t& nt) throw()
+      { return ::operator new(size, nt);
+      static void* operator delete(void* pMemory, const std::nothrow_t& nt) throw()
+      { return ::operator delete(pMemory, nt);
+  }
+  
+  class TEST : public StdNewDelete
+  {
+    public:
+      using StdMewDelete::operator new;       // 표준 형태가 보이도록 만든다.
+      using StdMewDelete::operator delete;
+      
+      // 사용자 정의 new, delete
+      static void* operator new(std::size_t size, ...);
+      static void* operator delete(void* pMemory, ...);
+  }
+```
