@@ -33,14 +33,18 @@
   class DArray : public BArray
   { ... };
   
-  void printArr(const BArray arr[]);
+  void printArr(const BArray arr[], int size)
+  {
+    for (int i = 0; i < size; ++i)
+      cout << arr[i];   //  -> *(arr + i);
+  }
   
   {
     BArray* B = new BArray[50];
     DArray* D = new DArray[50];
     
-    printArr(B);
-    printArr(D);  // ?
+    printArr(B, 50);
+    printArr(D, 50);  // ?
   }
 ```
   
