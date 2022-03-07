@@ -23,6 +23,26 @@
   - reinterpret_cast  : 임의의 타입으로 캐스팅 가능.
  
 ## 3. 배열과 다형성은 같은 수준으로 놓고 볼 것이 아니다
+
+  - 상속성이 주는 이득 기본 클래스 객체의 포인터나 참조자를 통해 파생 클래스 객체를 조작 가능.
+  - 더해서 파생 클래스 객체의 배열을 기본 클래스 포인터, 참조자로 조작 가능.
+  - 배열은 배열의 첫 요소를 가리키는 포인터 -> * (array + i). i * sizeof(배열내 요소 객체 하나).  삭제, 작업등.. 결과 미지수 조심하자.
+```cpp
+  class BArray
+  { ... };
+  class DArray : public BArray
+  { ... };
+  
+  void printArr(const BArray arr[]);
+  
+  {
+    BArray* B = new BArray[50];
+    DArray* D = new DArray[50];
+    
+    printArr(B);
+    printArr(D);  // ?
+  }
+```
   
 ## 4. 쓸데 없는 기본 생성자는 그냥 두지 말자
 
