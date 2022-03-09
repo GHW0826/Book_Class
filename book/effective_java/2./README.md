@@ -16,6 +16,69 @@
 ```
 
 ## 2. 생성자에 매개변수가 많다면 빌더를 고려하라
+  
+  - 매개변수가 많은 생성자, 정적 팩토리 메서드는 작성, 파악이 어렵다.
+```java
+  public class Test {
+    private final int p1;
+    private final int p2;
+    ....
+    
+    public Test(int p1, int p2, ...) {
+      this(p1, p2, ...);
+    }
+    .... // 매개 변수 갯수, 지원 인터페이스에 따라 달라짐.
+  }
+  
+  {
+    Test Obj = new Test(1,2,3,....);  // 매개변수 파악이 어려움.
+  }
+```
+  - 자바 빈즈 패턴이 대안이 될수 있다.
+```
+    메서드 호출을 여러 번해야 하고, 변수의 일관성이 무너짐. (세터로 변수지정).
+    클래스를 불변으로 만들 수 없고, 스레드 안전성 보장하려면 추가 작업을 해줘야 함.
+```
+  - 점층적 생성자 패턴의 안정선과 자바빈즈 패턴의 가독성을 겸비한 빌더 패턴.
+  - 정적 팩터리, 생성자를 호출해 빌더 객체를 얻고, 세터 메서드들로 원하는 매개변수를 설정
+  - 처리할 매개변수가 많으면 빌더 패턴 좋다.
+```java
+  public class Test {
+    private final int size;
+    private final int a;
+    private final int b;
+   
+    public static class Builder {
+      // 필수 변수
+      private final int size;
+      
+      // 선택 변수
+      private int a = 0;
+      private int b = 0;
+      
+      public Test build() { return new Test(this); }
+      public Builder(int size) { this.size = size; }
+      public Builder SetA(int a) {
+        this.a = a;
+        return this;
+      }
+      public Builder SetB(int b) {
+        this.b = b;
+        return this;
+      }
+    }
+    
+    private Test(Builder builder) {
+      this.size = builder.size;
+      this.a = builder.a;
+      this.b = builder.b;
+    }
+  }
+  {
+    Test Obj = new Test.Builder(10).SetA(10).SetB(5).build();
+  }
+```
+
 ## 3. private 생성자나 열거 타입으로 싱글턴임을 보증하라
 ## 4. 인스턴스화를 막으려거든 private 생성자를 사용하라
 ## 5. 자원을 직접 명시하지 말고 의존 객체 주입을 사용하라
