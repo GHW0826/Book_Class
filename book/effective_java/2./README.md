@@ -80,6 +80,41 @@
 ```
 
 ## 3. private 생성자나 열거 타입으로 싱글턴임을 보증하라
+
+  - 싱글톤 : 인스턴스 하나만 생성할 수 있는 클래스
+  - 방법 1. private 생성자, public static final 멤버를 마련해서 구현
+  - 방법 2. 정적 팩터리 메서드를 private static final 멤버로 제공. (private 생성자)
+  - 방법 3. 원소가 하나인 열거 타입 선언.
+  - 리플렉션 API인 AccessibleObject.setAccessible을 사용해 private 생성자 호출 가능. -> 두번째 객체가 생성되려 할때 예외를 던지게 한다.
+```java
+  // 1. 싱글턴 표시가 API에 명백히 드러남.
+  // 2. public static 필드가 final이라 다른 객체 참조 불가능.
+  // 3. 간결함.
+  public class Test {
+    public static final Test INSTANCE = new TEST();
+    private TEST() { ... }
+  }
+  
+  // 1. API를 바꾸지 않고도 싱글턴이 아니게 변경 가능. (ex. 스레드별로 다른 인스턴스를 넘겨주게 할 수 있다.)
+  // 2. 원하면 정적 팩터리를 제네릭 싱글턴 팩터리로 만들 수 있다.
+  // 3. 정적 팩터리의 메서드 참조를 공급자로 사용할 수 있다.
+  public class Test {
+    private static final Test INSTANCE = new TEST();
+    private TEST() { ... }
+    public static Test getInstance() { return INSTANCE; }
+  }
+  
+  
+  // 1. 직렬화, 리플렉션에서 안정.
+  // 2. 다른 클래스 상속시 사용 불가능.
+  // 3. thread-safe
+  // 4. java enum은 클래스, c++의 enum과 다른듯?
+  public enum Test {
+    INSTANCE;
+    ...
+  }
+```
+
 ## 4. 인스턴스화를 막으려거든 private 생성자를 사용하라
 ## 5. 자원을 직접 명시하지 말고 의존 객체 주입을 사용하라
 ## 6. 불필요한 객체 생성을 피하라
