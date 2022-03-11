@@ -137,7 +137,23 @@
     }
   }
 ```
+
 ## 6. 불필요한 객체 생성을 피하라
+
+  - 불변 객체는 재사용.
+```java
+  String s = new String("test");  // 실행될 떄마다 인스턴스를 새로 만듦.
+  String s = "test";              // 하나의 인스턴스를 사용.
+```
+
+  - 비싼 객체는 캐싱해서 재사용한다.
+  - 박싱 타입, 오토박싱 조심하자.
+```java
+  Long sum = 0L;
+  for (long i = 0; i < Integer.MAX_VALUE; ++i)
+    sum += i; // Long 인스턴스가 더해질때마다 
+```
+
 ## 7. 다 쓴 객체 참조를 해제하라
 ## 8. finalizer와 cleaner 사용을 피하라
 ## 9. try-finally보다는 try-with-resources를 사용하라
