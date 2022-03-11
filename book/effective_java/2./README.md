@@ -128,7 +128,15 @@
   - Spring DI 개념인것 같다.
   - 클래스가 여러 자원 인스턴스를 지원해야 하고, 클라이언트가 원하는 자원을 사용함.
   - 클래스의 유연성, 재사용성, 테스트 용이성이 좋다.
-  
+```java
+  public class DIClass {
+    private final Item obj;
+    
+    public DIClass(Item obj) {
+      this.obj = obj;
+    }
+  }
+```
 ## 6. 불필요한 객체 생성을 피하라
 ## 7. 다 쓴 객체 참조를 해제하라
 ## 8. finalizer와 cleaner 사용을 피하라
