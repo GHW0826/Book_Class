@@ -14,12 +14,12 @@
   8. finalizer와 cleaner 사용을 피하라
   9. try-finally보다는 try-with-resources를 사용하라
 
-3장 모든 객체의 공통 메서드
-아이템 10. equals는 일반 규약을 지켜 재정의하라
-아이템 11. equals를 재정의하려거든 hashCode도 재정의하라
-아이템 12. toString을 항상 재정의하라
-아이템 13. clone 재정의는 주의해서 진행하라
-아이템 14. Comparable을 구현할지 고려하라
+## [3장 모든 객체의 공통 메서드](./3.)
+  10. equals는 일반 규약을 지켜 재정의하라
+  11. equals를 재정의하려거든 hashCode도 재정의하라
+  12. toString을 항상 재정의하라
+  13. clone 재정의는 주의해서 진행하라
+  14. Comparable을 구현할지 고려하라
 
 4장 클래스와 인터페이스
 아이템 15. 클래스와 멤버의 접근 권한을 최소화하라
