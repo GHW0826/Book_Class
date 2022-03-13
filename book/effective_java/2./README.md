@@ -155,5 +155,27 @@
 ```
 
 ## 7. 다 쓴 객체 참조를 해제하라
+
+  - GC 있어도 메모리 관리에 신경 써야 한다.
+  - 메모리 누수가 계속되면, GC활동, 메모리 사용량이 늘어남 결국 성능저하. 심하면 디스크 페이징, OutOfMemoryError
+  - 다 쓴 참조 조심. 앞으로 다시 쓰지 않을 참조들.
+  - 다 쓴 참조들은 null처리 하자. NullPointerException으로 실수로 사용 방지도 가능.
+  - 이런 처리도 좋은데, 참조의 범위를 벗어나게 밀어내는 것도 좋다.
+  - 리스너, 콜백 등도 등록후 명확히 해지하지 않으면 계속 쌓여간다. 이때 콜백을 약한 참조하면 GC가 수거해간다.
+
 ## 8. finalizer와 cleaner 사용을 피하라
 ## 9. try-finally보다는 try-with-resources를 사용하라
+
+  - 자원이 둘 이상이면 try-finally 방식은 지저분함.
+  - try-with-resource가 더 간결하교, 분명하고 보기도 좋음.
+```java
+  static String firstLineOfFile(String path, STring default) {
+    try (BufferedReader br = new BufferedReader(new FileReader(path))) {
+      return br.readLine();
+    }
+    catch (IOException e) {
+      return default;
+    }
+  }
+```
+
