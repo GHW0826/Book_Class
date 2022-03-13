@@ -164,12 +164,32 @@
   - 리스너, 콜백 등도 등록후 명확히 해지하지 않으면 계속 쌓여간다. 이때 콜백을 약한 참조하면 GC가 수거해간다.
 
 ## 8. finalizer와 cleaner 사용을 피하라
+
+  - 자바는 2가지 객체 소멸자 제공. finalizer,cleaner
+  - c++의 destructor와 다른 개념인듯.
+  - 자바의 메모리 회수는 try-with-resource, try-finally
+  - finalizer는 수행할 스레드 제어 불가능. cleaner는 수행할 스레드 제어 가능.
+  - 상태를 영구적으로 수정하는 작업에서는 finalizer, cleaner 절대 의존하면 안됨.
+```
+  둘다 전체적으로 안좋음.but 
+  1. 자원의 소유자가 close 메서드를 호출하지 않는 것에 안전망 역할을 함.
+  2. 네이티브 피어와 연결된 객체에서 GC는 네이티브 티어를 몰라 가비지 컬렉션이 안일어남. 이거 처리는 적당함.
+    (이것도 성능 저하 감당 가능하거나, 자원을 즉시회수 애햐하면 close사용 해야 한다.)
+  이것도 생각해보고 사용.
+  - finalizer
+    예측할 수 없고, 상황에 따라 위험할 수 있어 일반적으로 불필요. 쓰임새가 있지만 기본적으론 사용 안함.
+    
+  - cleaner
+    덜 위험 하지만 예측할 수없고, 위험한건 마찬가지.
+```
+  - cleaner, finalizer는 안전망 역할이나 중요하지 않은 네이티브 자원 회수용으로만 사용하자. (이것도 불확실성, 성능 저하 주의)
+
 ## 9. try-finally보다는 try-with-resources를 사용하라
 
   - 자원이 둘 이상이면 try-finally 방식은 지저분함.
   - try-with-resource가 더 간결하교, 분명하고 보기도 좋음.
 ```java
-  static String firstLineOfFile(String path, STring default) {
+  static String firstLineOfFile(String path, String default) {
     try (BufferedReader br = new BufferedReader(new FileReader(path))) {
       return br.readLine();
     }
@@ -178,4 +198,3 @@
     }
   }
 ```
-
