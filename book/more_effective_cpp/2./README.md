@@ -30,5 +30,28 @@
 ```
 
 ## 6. 증가 및 감소 연산자의 전위(prefix)/후위(postfix) 형태를 반드시 구분하자
+
+```cpp
+  class TEST 
+  {
+    public:
+      TEST& operator++() {            // 전위
+        *this += 1;
+        return *this;
+      }
+      
+      const TEST operator++(int) {     // 후위
+        const TEST old = *this;
+        ++(*this);
+        
+        return old;
+      }
+  }
+```
+  - 후위가 const 반환하는 이유는 코드 간결성, 직관성 등등..이 있다.
+  - 후위 연산은 임시객체를 만들어야 하고, 반환 임시객체를 만들어야 해서 전위가 약간 더 빠르다.
+  - 후위 연산자는 반드시 전위 연산자를 사용해 구현해야 한다.
+
 ## 7. &&, ||, 혹은 . 연산자는 오버로딩 대상이 절대로 아니다
+
 ## 8. new와 delete의 의미를 정확히 구분하고 이해하자
