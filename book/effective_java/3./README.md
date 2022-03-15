@@ -92,6 +92,38 @@
 ```
 
 ## 13. clone 재정의는 주의해서 진행하라
+
+ - Cloneable은 복제해도 되는 클래스 명시 인터페이스. but Cloneable 구현으로 clone메서드 호출할 수 없다.
+ - 일반적으로 Cloneable을 구현한 클래스는 clone 메서드를public으로 제공. -> 생성자 호출 안해도 객체 생성 가능.
+ - Clone 명세
+```java
+ x.clone() != x
+ x.clone().getClass() == x.getClass()
+ x.clone().equals(x) // 일반적으로 참, 필수는 아님
+```
+ - clone은 사실상 생성자와 같은 효과. (원본 객체에 해를 끼치지 않고 동시에 복제된 객체의 불변식 보장)
+ - 가변 상태 참조 클래스용 clone은 해당 필드가 final이 아닐때 사용 가능. final 제거해야 할 수 있다.
+ - 해시 테이블의 경우 버킷 복제해도 같은 연결 리스트를 참조하여 예기치 못할 가능성이 생김.
+ - deepCopy 메서드 재귀 호출 보단 반복자를 써서 순회하는게 나음.
+ - 생성자와 마찬가지로 clone에서도 가상함수 호출하면 안됨.
+ - Cloneable을 구현한 모든 클래스는 clone을 재정의해야 한다. 접근 재한자는 public, 반환값으 클래스 자신으로 변경.
+ - 이후 깊은 복사가 필요한 부분은 clone을 재귀적으로 호출해 주는게 일반적이지만 항상 맞는건 아님.
+```java
+ @Override public HashTable clone() {
+   try {
+     HashTable result = (HashTable) super.clone();
+     result.buckets = new Entry[buckets.length];
+     for (int i = 0; i < buckets.length; ++i)
+       if (buckets[i[ != null)
+         result.buckets[i] = buckets[i].deepCopy();
+     return result;
+   } catch (CloneNotSupportedException e) {
+     throw new AssertionError();
+   }
+ }
+```
+ - clone보다 복사 생성자, 복사 팩터리 패턴이 낫다.
+
 ## 14. Comparable을 구현할지 고려하라
 
  
