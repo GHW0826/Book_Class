@@ -126,5 +126,27 @@
 
 ## 14. Comparable을 구현할지 고려하라
 
+ - compareTo는 Object의 메서드가 아님. 동치성 비교, 순서 비교 가능, 제네릭함.
+ - 구현시 컬렉션 관리를 편하게 할 수 있다.
+ - compareTo의 일반 규약
+```
+ 객체와 주어진 객체의 순서를 비교.
+ 작으면 음수, 같으면 0, 크면 양수 반환. 비교 불가능 객체시  ClassCastException을 던짐.
+ sgn(부호 함수) : 음수, 0, 양수 -> -1, 0, 1 를 반환.
+ sgn(x.compareTo(y)) == -sgn(y.compareTo(x))
  
+ 추이성을 보장해야 한다. 
+ x.compareTo(y) > 0 && y.compareTo(z) > 0 -> x.compareTo(z) > 0
+ x.compareTo(y) == 0 -> sgn(x.compareTo(z)) == sgn(y.compareTo(z))
+ 
+ 꼭은 아닌데 지키자.
+ compareTo로 수행한 동치성 결과가 equals의 결과와 같아야 한다.
+ (x.compareTo(y) == 0) == (x.equals(y))
+```
+ - 타입이 다른 객체는 그냥 예외를 던지면 된다. but 다른 타입 비교도 허용 가능.
+ - equals <=> hashCode 관계와 마찬가지로 compareTo 잘못 구현시 TreeSet, TreeMap, 검색, 정렬 알고리즘이 작동 잘 안할 수 있다.
+ - compareTo는 제네릭 인터페이스이므로 컴파일타임에 인수 탕비이 정해짐.
+ - Comparable을 구현하지 않은 필드나 표준이 아닌 순서로 비교 해야 한다면 비교자를 대신 사용한다.
+ - equals, clone과 비슷하게 재귀적인 방식으로 구현.
+ - compareTo에서 부등호 쓰지말고, 박싱된 기본 타입 클래스가 제공하는 정적 compare 메서드나 Comparator가 제공하는 비교자 생성 메서드를 사용하자.
   
