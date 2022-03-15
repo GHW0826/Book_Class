@@ -149,4 +149,15 @@
  - Comparable을 구현하지 않은 필드나 표준이 아닌 순서로 비교 해야 한다면 비교자를 대신 사용한다.
  - equals, clone과 비슷하게 재귀적인 방식으로 구현.
  - compareTo에서 부등호 쓰지말고, 박싱된 기본 타입 클래스가 제공하는 정적 compare 메서드나 Comparator가 제공하는 비교자 생성 메서드를 사용하자.
-  
+```java
+ // 정적 compare 메서드 활용 비교자
+ static Comparator<Object> hashCodeOrder = new Comparator<>() {
+   public int compare(Object o1, Object o2) {
+     return Integer.compare(o1.hashCode(), o2.hashCode());
+   } 
+ }
+ 
+ // 비교자 생성 메서드 활용 
+ static Comparator<Object>hashCodeOrder = 
+         Comparator.comparingInt(o -> o.hashCode());
+```
