@@ -54,4 +54,39 @@
 
 ## 7. &&, ||, 혹은 . 연산자는 오버로딩 대상이 절대로 아니다
 
+  - c++은 복합적인 bool 표현식 평가시 단축평가 할 수 잇다.
+  - &&, ||를 오버로딩하는 것은 단축평가 의미구조를 함수호출 의미구조로 대체하는 것이다.
+```cpp
+  if (expression1 && expression2) ...
+  ->
+  if (expression1.operator&&(expression2)) ...
+  if (operator&&(expression1, expression2)) ...
+```
+  - 함수호출적으로 바꾸면, 단축평가가 이루어지지 않는다. 
+  - 또한 매개변수 평가 순서가 정의되이 있지 않아, 무엇이 먼저 평가되는지 알기 힘들다.
+  - 쉼표 연산자도 있긴함 (for문). 쉼표 앞에껄 먼저 평가후 뒤에껄 평가.
+  - 마찬가지로 함수로 오버로딩시 평가 순서 애매해진다.
+```cpp
+  for (int i = 0, j = 10; 
+        i < j; 
+        ++i, --j) // 쉼표 연산
+```
+  - 책 기준 C++오버로딩 불가능 연산자 12가지
+```cpp
+  .     .*      ::      ?:
+  new   delete  sizeof  typeid
+  static_cast   dynamic_cast  const_cast  reinterpret_cast
+```
+  - 오버로딩 가능 연산자
+```cpp
+  operator new      operator delete
+  operator new[]      operator delete[]
+  +   -   *   /   %   ^   &   |   ~
+  !   =   <   >   +=  -=  *=  /=  %=
+  ^=  &=  |=  <<  >>  >>= <<= ==  !=
+  <=  >=  &&  ||  ++  --  , ->* ->
+  ()  []
+  
+```
+
 ## 8. new와 delete의 의미를 정확히 구분하고 이해하자
