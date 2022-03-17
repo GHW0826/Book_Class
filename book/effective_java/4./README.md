@@ -64,7 +64,7 @@
   
   불변 객체 단점 해소 방안
   다단계 연산들을 예측하여 기본기능으로 제공한다.
-    ex) BingInteger <-> companion class,      String <-> StringBuilder    
+    ex) BigInteger <-> companion class,      String <-> StringBuilder    
 ```
 
 ## 18. 상속보다는 컴포지션을 사용하라
